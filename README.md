@@ -8,12 +8,12 @@ Python async is hopelessly designed and a huge pain in the arse. There's a lot o
 view any errors in co-routines.
 
 # dependencies
-python 3.5+ for async await (to avoid compiling from source, get https://github.com/jjhelmus/berryconda)
-pygame (needs to be compiled from source)
-RPi.GPIO (pip)
-aiohttp (pip)
-BeautifulSoup 4 (pip)
-lxml (pip and I think some apt-get on dependencies?)
+* python 3.5+ for async await (to avoid compiling from source, get https://github.com/jjhelmus/berryconda)
+* pygame (needs to be compiled from source)
+* RPi.GPIO (pip)
+* aiohttp (pip)
+* BeautifulSoup 4 (pip)
+* lxml (pip and I think some apt-get on dependencies?)
 
 # data sources
 
