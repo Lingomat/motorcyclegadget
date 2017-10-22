@@ -71,7 +71,10 @@ async def drawNews(index):
     return
   imageRect = (0, headheight, 240, 320 - headheight - S_BAR_HEIGHT)
   if image != False:
-    tft.dispZoomImage(image, imageRect)
+    try:
+      tft.dispZoomImage(image, imageRect)
+    except Exception as exc:
+      print("can't dispZoomImage", exc)
   text = newz.articles()[index]['title']
   while text:
     tft.rect(0, 0, 240, headheight, (120,0,0))
@@ -103,7 +106,10 @@ async def drawForecast(weatherdata, ypos):
     tstr =  str(w['d']) + ':00'
     yoff = 0 if i < 4 else totalheight
     xpos = ((i % 4) * columnwidth)
-    tft.dispZoomImage(icon, (xpos, ypos + yoff, columnwidth, iconheight))
+    try:
+      tft.dispZoomImage(icon, (xpos, ypos + yoff, columnwidth, iconheight))
+    except Exception as exc:
+      print("can't dispZoomImage", exc)
     tft.btext(wfont, str(w['t']), (xpos, ypos + iconheight + yoff, columnwidth, tempheight), 'top')
     tft.btext(gfont, rain, (xpos, ypos + iconheight + tempheight + yoff, columnwidth, rainheight))
     tft.btext(dfont, tstr, (xpos, ypos + iconheight + tempheight + rainheight + yoff, columnwidth, timeheight), 'bottom')
@@ -156,9 +162,21 @@ async def main(loop):
   i = 0
   while True:
     if not sleepmode:
-      await drawTemp(sensor)
-      await drawNews(i)
-      await displayWeather()
+      try:
+        await drawTemp(sensor)
+      except Exception as exc:
+        print(exc)
+        exit()
+      try:
+        await drawNews(i)
+      except Exception as exc:
+        print(exc)
+        exit()
+      try:
+        await displayWeather()
+      except Exception as exc:
+        print(exc)
+        exit()
       i = i + 1
       if i == newz.numberOf():
         i = 0
@@ -177,6 +195,6 @@ if __name__ == '__main__':
     asyncio.ensure_future(monitorMotion())
   ]
   print('starting event loop')
-  event_loop.run_until_complete(asyncio.wait(tasks))
+  event_loop.run_until_complete(asyncio.gather(*tasks))
   #event_loop.close()
 

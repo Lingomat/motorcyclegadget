@@ -35,16 +35,19 @@ class BOMWeather:
       age = (datetime.now() - self.forecast['retrieved']).seconds
       if age < WEATHER_INTERVAL:
         doForecast = False
-    if doForecast:
-      async with aiohttp.ClientSession() as session:
-        try:
-          html = await self._fetch(session, self.bomurl)
-        except Exception as exc:
-          print('BOM _fetch error', exc)
-          return False
-        s = html.find('<div id="main-content">')
-        e = html.find('<div class="right-column">')
-        html = html[s:e]
+        # print('forecast age',age,'not fetching')
+    if not doForecast:
+      return
+    print('fetching forecast')
+    async with aiohttp.ClientSession() as session:
+      try:
+        html = await self._fetch(session, self.bomurl)
+      except Exception as exc:
+        print('BOM _fetch error', exc)
+        return False
+      s = html.find('<div id="main-content">')
+      e = html.find('<div class="right-column">')
+      html = html[s:e]
       if html != None:
         wdata = self.parseTable(html)
         self.forecast = {
@@ -131,6 +134,7 @@ class BOMWeather:
           }
           thisobs['i'] = self.getIcon(thisobs)
           wd.append(thisobs)
+    #print('weather data', wd)
     return wd
 
   def getIconPath(self, iconid):
